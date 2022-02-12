@@ -1,10 +1,15 @@
 package com.marc.forment.photos.db.records
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
 
-@Table("ORDERS")
+@Entity
+@Table(name = "orders")
 data class OrderRecord (
-        @Id val id: String?,
+        @Id @GeneratedValue( strategy = GenerationType.IDENTITY)
+        val id: Long?,
         val name: String
 )

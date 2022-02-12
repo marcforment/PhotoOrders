@@ -17,7 +17,7 @@ class OrderController(private val orderService: OrderService) {
 
     @GetMapping("/orders/{id}")
     fun getOrder(@PathVariable id: Long) : Order {
-        return Order("$id","Test")
+        return Order(id,"Test")
     }
 
     @PostMapping("/orders")

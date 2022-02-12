@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class OrderService(private val orderRepository: OrderRepository) {
-    fun findAllOrders(): List<Order> = orderRepository.selectOrders().map { Order(it.id, it.name) }
+    fun findAllOrders(): List<Order> = orderRepository.findAll().map { Order(it.id, it.name) }
     fun saveOrder(order: Order) {
         orderRepository.save(OrderRecord(order.id, order.name))
     }
