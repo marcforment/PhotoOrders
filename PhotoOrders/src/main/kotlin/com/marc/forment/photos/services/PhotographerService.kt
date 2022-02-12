@@ -13,7 +13,7 @@ class PhotographerService(private val photographerRepository: PhotographerReposi
         return if (result.isPresent) {
             result.get()
         }else {
-            throw PhotographerNotFoundException()
+            throw PhotographerNotFoundException(photographerId)
         }
     }
 

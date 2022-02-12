@@ -62,7 +62,7 @@ class OrderController(private val orderService: IOrderService) {
     }
 
     @PutMapping("/orders/{id}/discard")
-    fun uploadOrder(@PathVariable orderId: Long) {
+    fun discardOrder(@PathVariable orderId: Long) {
         catchExceptions {
             orderService.discardOrder(orderId)
         }
@@ -75,7 +75,7 @@ class OrderController(private val orderService: IOrderService) {
         }
     }
 
-    @PutMapping("/orders/{id}/discard")
+    @PutMapping("/orders/{id}/cancel")
     fun cancelOrder(@PathVariable orderId: Long) {
         catchExceptions {
             orderService.cancelOrder(orderId)
