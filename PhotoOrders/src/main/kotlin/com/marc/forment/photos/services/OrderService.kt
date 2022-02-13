@@ -6,6 +6,7 @@ import com.marc.forment.photos.entities.NewOrder
 import com.marc.forment.photos.entities.Order
 import com.marc.forment.photos.entities.OrderState
 import com.marc.forment.photos.exceptions.InvalidState
+import com.marc.forment.photos.exceptions.NotInBusinessHours
 import com.marc.forment.photos.exceptions.OrderNotFoundException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -20,19 +21,22 @@ class OrderService(
         val result = orderRepository.findById(orderId)
         return if (result.isPresent) {
             result.get()
-        }else {
+        } else {
             throw OrderNotFoundException(orderId)
         }
     }
 
-    override fun findAllOrders(): List<Order> = orderRepository.findAll()
+    override fun findAllOrders(): List<Order> =
+            orderRepository.findAll()
+
     override fun createOrder(newOrder: NewOrder) {
         saveOrder(newOrder.toOrder())
     }
 
-    override fun scheduleOrder(orderId: Long, dateTime: Date) {
+    override fun scheduleOrder(orderId: Long, dateTime: LocalDateTime) {
         val order = find(orderId)
-        when(order.state) {
+        if (dateTime.isNotInBusinessHours()) throw NotInBusinessHours(dateTime)
+        when (order.state) {
             OrderState.UNSCHEDULED -> saveOrder(order.copy(dateTime = dateTime, state = OrderState.PENDING))
             else -> throw InvalidState(order.state, OrderState.UNSCHEDULED)
         }
@@ -41,7 +45,7 @@ class OrderService(
 
     override fun assignOrder(orderId: Long, photographerId: Long) {
         val order = find(orderId)
-        when(order.state) {
+        when (order.state) {
             OrderState.PENDING -> {
                 val photographer = photographerService.find(photographerId)
                 saveOrder(order.copy(photographer = photographer, state = OrderState.ASSIGNED))
@@ -52,7 +56,7 @@ class OrderService(
 
     override fun uploadOrder(orderId: Long) {
         val order = find(orderId)
-        when(order.state) {
+        when (order.state) {
             OrderState.ASSIGNED -> saveOrder(order.copy(state = OrderState.UPLOADED))
             else -> throw InvalidState(order.state, OrderState.ASSIGNED)
         }
@@ -60,7 +64,7 @@ class OrderService(
 
     override fun discardOrder(orderId: Long) {
         val order = find(orderId)
-        when(order.state) {
+        when (order.state) {
             OrderState.UPLOADED -> saveOrder(order.copy(state = OrderState.ASSIGNED))
             else -> throw InvalidState(order.state, OrderState.UPLOADED)
         }
@@ -68,9 +72,9 @@ class OrderService(
 
     override fun verifyOrder(orderId: Long) {
         val order = find(orderId)
-        when(order.state) {
+        when (order.state) {
             OrderState.UPLOADED -> saveOrder(order.copy(state = OrderState.COMPLETED))
-            else -> throw InvalidState(order.state,OrderState.UPLOADED)
+            else -> throw InvalidState(order.state, OrderState.UPLOADED)
         }
     }
 
@@ -78,11 +82,12 @@ class OrderService(
         val order = find(orderId)
         saveOrder(order.copy(state = OrderState.CANCELED))
     }
+
     private fun saveOrder(order: Order) {
         orderRepository.save(order)
     }
 
-    private fun NewOrder.toOrder() : Order =
+    private fun NewOrder.toOrder(): Order =
             Order(
                     name = this.name,
                     surname = this.surname,
@@ -92,10 +97,13 @@ class OrderService(
                     title = this.title,
                     logisticInfo = this.logisticInfo,
                     dateTime = this.dateTime,
-                    state = when(this.dateTime){
+                    state = when (this.dateTime) {
                         null -> OrderState.UNSCHEDULED
                         else -> OrderState.PENDING
                     }
             )
+
+    private fun LocalDateTime.isNotInBusinessHours(): Boolean =
+            this.hour < 8 || (this.hour > 20 && this.minute > 0)
 
 }

@@ -1,7 +1,7 @@
 package com.marc.forment.photos.controllers.contract
 
-import java.util.*
+import java.time.LocalDateTime
 
 data class ScheduleOrderRequest(
-        val dateTime: Date
+        val dateTime: LocalDateTime
 )

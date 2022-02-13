@@ -1,6 +1,6 @@
 package com.marc.forment.photos.entities
 
-import java.util.*
+import java.time.LocalDateTime
 
 data class NewOrder(
         val name: String,
@@ -10,5 +10,5 @@ data class NewOrder(
         val photoType: PhotoType,
         val title: String?,
         val logisticInfo: String?,
-        val dateTime: Date?
+        val dateTime: LocalDateTime?
 )

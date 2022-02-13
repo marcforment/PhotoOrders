@@ -2,7 +2,7 @@ package com.marc.forment.photos.controllers.contract
 
 import com.marc.forment.photos.entities.NewOrder
 import com.marc.forment.photos.entities.PhotoType
-import java.util.*
+import java.time.LocalDateTime
 
 data class NewOrderRequest(
         val name: String,
@@ -12,9 +12,9 @@ data class NewOrderRequest(
         val photoType: PhotoType,
         val title: String?,
         val logisticInfo: String?,
-        val dateTime: Date?
+        val dateTime: LocalDateTime?
 ) {
-    fun toNewOrder() : NewOrder =
+    fun toNewOrder(): NewOrder =
             NewOrder(
                     name = this.name,
                     surname = this.surname,

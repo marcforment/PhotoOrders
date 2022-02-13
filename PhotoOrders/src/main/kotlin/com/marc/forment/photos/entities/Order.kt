@@ -1,6 +1,6 @@
 package com.marc.forment.photos.entities
 
-import java.util.*
+import java.time.LocalDateTime
 import javax.persistence.*
 
 enum class PhotoType {
@@ -21,18 +21,18 @@ enum class OrderState {
 @Entity
 @Table(name = "orders")
 data class Order(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
-    val name: String,
-    val surname: String,
-    val email: String,
-    val cellNumber: String,
-    val photoType: PhotoType,
-    val title: String?,
-    val logisticInfo: String?,
-    val dateTime: Date?,
-    val state: OrderState,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photographer_id")
-    val photographer: Photographer? = null
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Long? = null,
+        val name: String,
+        val surname: String,
+        val email: String,
+        val cellNumber: String,
+        val photoType: PhotoType,
+        val title: String?,
+        val logisticInfo: String?,
+        val dateTime: LocalDateTime?,
+        val state: OrderState,
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "photographer_id")
+        val photographer: Photographer? = null
 )

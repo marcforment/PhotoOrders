@@ -12,14 +12,17 @@ class PhotographerService(private val photographerRepository: PhotographerReposi
         val result = photographerRepository.findById(photographerId)
         return if (result.isPresent) {
             result.get()
-        }else {
+        } else {
             throw PhotographerNotFoundException(photographerId)
         }
     }
+
+    override fun findAllPhotographers(): List<Photographer> =
+            photographerRepository.findAll()
 
     override fun createPhotographer(newPhotographer: NewPhotographer) {
         photographerRepository.save(newPhotographer.toPhotographer())
     }
 
-    private fun NewPhotographer.toPhotographer() : Photographer = Photographer(name = this.name)
+    private fun NewPhotographer.toPhotographer(): Photographer = Photographer(name = this.name)
 }

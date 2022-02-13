@@ -21,16 +21,17 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class OrderController(private val orderService: IOrderService) {
-    @GetMapping("/orders")
-    fun getOrders(): List<Order> {
-        return orderService.findAllOrders()
-    }
 
-    @GetMapping("/orders/{id}")
-    fun getOrder(@PathVariable orderId: Long) : Order {
+    @GetMapping("/orders/{orderId}")
+    fun getOrder(@PathVariable orderId: Long): Order {
         return catchExceptions {
             orderService.find(orderId)
         }
+    }
+
+    @GetMapping("/orders")
+    fun getOrders(): List<Order> {
+        return orderService.findAllOrders()
     }
 
     @PostMapping("/orders")
@@ -40,54 +41,54 @@ class OrderController(private val orderService: IOrderService) {
         }
     }
 
-    @PutMapping("/orders/{id}/schedule")
+    @PutMapping("/orders/{orderId}/schedule")
     fun scheduleOrder(@PathVariable orderId: Long, @RequestBody scheduleOrderRequest: ScheduleOrderRequest) {
         catchExceptions {
             orderService.scheduleOrder(orderId, scheduleOrderRequest.dateTime)
         }
     }
 
-    @PutMapping("/orders/{id}/assign")
+    @PutMapping("/orders/{orderId}/assign")
     fun assignOrder(@PathVariable orderId: Long, @RequestBody assignOrderRequest: AssignOrderRequest) {
         catchExceptions {
             orderService.assignOrder(orderId, assignOrderRequest.photographerId)
         }
     }
 
-    @PutMapping("/orders/{id}/upload")
+    @PutMapping("/orders/{orderId}/upload")
     fun uploadOrder(@PathVariable orderId: Long, @RequestBody uploadOrderRequest: UploadOrderRequest) {
         catchExceptions {
             orderService.uploadOrder(orderId)
         }
     }
 
-    @PutMapping("/orders/{id}/discard")
+    @PutMapping("/orders/{orderId}/discard")
     fun discardOrder(@PathVariable orderId: Long) {
         catchExceptions {
             orderService.discardOrder(orderId)
         }
     }
 
-    @PutMapping("/orders/{id}/verify")
+    @PutMapping("/orders/{orderId}/verify")
     fun verifyOrder(@PathVariable orderId: Long) {
         catchExceptions {
             orderService.verifyOrder(orderId)
         }
     }
 
-    @PutMapping("/orders/{id}/cancel")
+    @PutMapping("/orders/{orderId}/cancel")
     fun cancelOrder(@PathVariable orderId: Long) {
         catchExceptions {
             orderService.cancelOrder(orderId)
         }
     }
 
-    private fun <T> catchExceptions(block: () -> T) : T {
+    private fun <T> catchExceptions(block: () -> T): T {
         try {
             return block()
-        } catch (e: OrderNotFoundException){
+        } catch (e: OrderNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message)
-        } catch (e: PhotographerNotFoundException){
+        } catch (e: PhotographerNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message)
         } catch (e: InvalidState) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
